@@ -1,6 +1,3 @@
-import java.awt.Point;
-import java.util.Vector;
-
 import org.jgrapht.UndirectedGraph;
 import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.graph.SimpleGraph;
@@ -11,7 +8,7 @@ import org.jgrapht.graph.SimpleGraph;
  */
 public class GraphFacilities {
 	public static final int W = 55, H = 16;// the height and width of the
-	//public static final int W = 385, H = 112; // enemies matrix
+	// public static final int W = 385, H = 112; // enemies matrix
 	public static WormVertex[][] vertexMat = new WormVertex[H][W];
 	public static UndirectedGraph<WormVertex, WormEdge> g = new SimpleGraph<WormVertex, WormEdge>(WormEdge.class);
 	public static int _x = 700, _y = 50;
@@ -130,90 +127,95 @@ public class GraphFacilities {
 
 		for (i = 0; i < (H) * (W); i++) {
 			// right
-//			if (i % W < (W - 1)) {
-			if(i % W < W-1 && i / W > 0){
-					if (vertexMat[(i / (W))][(i % (W))] != null && vertexMat[(i / (W))][(i % (W)) + 1] != null)
-						g.addEdge(vertexMat[(i / (W))][(i % (W))], vertexMat[(i / (W))][(i % (W)) + 1],
-								new WormEdge(vertexMat[(i / (W))][(i % (W))], vertexMat[(i / (W))][(i % (W)) + 1]));
-				
-				if (vertexMat[(i / (W))][(i % (W))] != null && vertexMat[(i / W) - 1][(i % W)] != null)
-				{
-					g.addEdge(vertexMat[(i / (W))][(i % (W))], vertexMat[(i / W)-1][(i % W)],
-							new WormEdge(vertexMat[(i / (W))][(i % (W))], vertexMat[(i / W)-1][(i % W)]));
+			// if (i % W < (W - 1)) {
+			if (i % W < W - 1 && i / W > 0) {
+				if (vertexMat[(i / (W))][(i % (W))] != null && vertexMat[(i / (W))][(i % (W)) + 1] != null)
+					g.addEdge(vertexMat[(i / (W))][(i % (W))], vertexMat[(i / (W))][(i % (W)) + 1],
+							new WormEdge(vertexMat[(i / (W))][(i % (W))], vertexMat[(i / (W))][(i % (W)) + 1]));
+
+				if (vertexMat[(i / (W))][(i % (W))] != null && vertexMat[(i / W) - 1][(i % W)] != null) {
+					g.addEdge(vertexMat[(i / (W))][(i % (W))], vertexMat[(i / W) - 1][(i % W)],
+							new WormEdge(vertexMat[(i / (W))][(i % (W))], vertexMat[(i / W) - 1][(i % W)]));
 				}
 			}
-				
-				// g.addEdge(vertexMat[(i / (W))][(i % (W)) + 1], vertexMat[(i /
-				// (W))][(i % (W))],
-				// new WormEdge(vertexMat[(i / (W))][(i % (W)) + 1],
-				// vertexMat[(i / (W))][(i % (W))]));
-				// System.out.println(new Point((i/W), ((i%W)))+" "+new
-				// Point(((i/W)), (((i%W)+1))));
-			}
-			// left
-			// if (i % W > 0) {
-			// g.addEdge(vertexMat[(i / (W))][(i % (W)) - 1], vertexMat[(i /
-			// (W))][(i % (W))],
-			// new WormEdge(vertexMat[(i / (W))][(i % (W)) - 1], vertexMat[(i /
-			// (W))][(i % (W))]));
-			// g.addEdge(vertexMat[(i / (W))][(i % (W))], vertexMat[(i /
-			// (W))][(i % (W)) - 1],
-			// new WormEdge(vertexMat[(i / (W))][(i % (W))], vertexMat[(i /
-			// (W))][(i % (W)) - 1]));
-			// // System.out.println(new Point((i/W), ((i%W)))+" "+new
-			// // Point(((i/W)), (((i%W)-1))));
-			// }
-//			// main
-//			if ((i / W) < (H - 1) && (i % W) < (H - 1)) {
-//				if (vertexMat[(i / (W))][(i % (W))] != null && vertexMat[(i / (W)) + 1][(i % (W)) + 1] != null)
-//					g.addEdge(vertexMat[(i / (W))][(i % (W))], vertexMat[(i / (W)) + 1][(i % (W)) + 1],
-//							new WormEdge(vertexMat[(i / (W))][(i % (W))], vertexMat[(i / (W)) + 1][(i % (W)) + 1]));
-//			}
-//
-//			// secondery
-//			if ((i / W) < (H - 1) && (i % W) > 0 && (i % W) < H) {
-//				if (vertexMat[(i / (W))][(i % (W))+(H-1)] != null && vertexMat[(i / (W)) + 1][(i % (W)) - 1] != null)
-//					g.addEdge(vertexMat[(i / (W))][(i % (W))], vertexMat[(i / (W)) + 1][(i % (W)) - 1],
-//							new WormEdge(vertexMat[(i / (W))][(i % (W))], vertexMat[(i / (W)) + 1][(i % (W)) - 1]));
-//			}
 
-			// g.addEdge(vertexMat[(i / (W)) + 1][(i % (W))], vertexMat[(i /
+			// g.addEdge(vertexMat[(i / (W))][(i % (W)) + 1], vertexMat[(i /
 			// (W))][(i % (W))],
-			// new WormEdge(vertexMat[(i / (W)) + 1][(i % (W))], vertexMat[(i /
-			// (W))][(i % (W))]));
-			// // System.out.println(new Point((i/W), ((i%W)))+" "+new
-			// // Point(((i/W)+1), (((i%W)))));
-			// }
-			// // top
-			// if (i / W > 0) {
-			// g.addEdge(vertexMat[(i / (W)) - 1][(i % (W))], vertexMat[(i /
-			// (W))][(i % (W))],
-			// new WormEdge(vertexMat[(i / (W)) - 1][(i % (W))], vertexMat[(i /
-			// (W))][(i % (W))]));
-			// g.addEdge(vertexMat[(i / (W))][(i % (W))], vertexMat[(i / (W)) -
-			// 1][(i % (W))],
-			// new WormEdge(vertexMat[(i / (W))][(i % (W))], vertexMat[(i / (W))
-			// - 1][(i % (W))]));
+			// new WormEdge(vertexMat[(i / (W))][(i % (W)) + 1],
+			// vertexMat[(i / (W))][(i % (W))]));
 			// System.out.println(new Point((i/W), ((i%W)))+" "+new
-			// Point(((i/W)-1), (((i%W)))));
-			// }
+			// Point(((i/W)), (((i%W)+1))));
 		}
+		// left
+		// if (i % W > 0) {
+		// g.addEdge(vertexMat[(i / (W))][(i % (W)) - 1], vertexMat[(i /
+		// (W))][(i % (W))],
+		// new WormEdge(vertexMat[(i / (W))][(i % (W)) - 1], vertexMat[(i /
+		// (W))][(i % (W))]));
+		// g.addEdge(vertexMat[(i / (W))][(i % (W))], vertexMat[(i /
+		// (W))][(i % (W)) - 1],
+		// new WormEdge(vertexMat[(i / (W))][(i % (W))], vertexMat[(i /
+		// (W))][(i % (W)) - 1]));
+		// // System.out.println(new Point((i/W), ((i%W)))+" "+new
+		// // Point(((i/W)), (((i%W)-1))));
+		// }
+		// // main
+		// if ((i / W) < (H - 1) && (i % W) < (H - 1)) {
+		// if (vertexMat[(i / (W))][(i % (W))] != null && vertexMat[(i / (W)) + 1][(i %
+		// (W)) + 1] != null)
+		// g.addEdge(vertexMat[(i / (W))][(i % (W))], vertexMat[(i / (W)) + 1][(i % (W))
+		// + 1],
+		// new WormEdge(vertexMat[(i / (W))][(i % (W))], vertexMat[(i / (W)) + 1][(i %
+		// (W)) + 1]));
+		// }
+		//
+		// // secondery
+		// if ((i / W) < (H - 1) && (i % W) > 0 && (i % W) < H) {
+		// if (vertexMat[(i / (W))][(i % (W))+(H-1)] != null && vertexMat[(i / (W)) +
+		// 1][(i % (W)) - 1] != null)
+		// g.addEdge(vertexMat[(i / (W))][(i % (W))], vertexMat[(i / (W)) + 1][(i % (W))
+		// - 1],
+		// new WormEdge(vertexMat[(i / (W))][(i % (W))], vertexMat[(i / (W)) + 1][(i %
+		// (W)) - 1]));
+		// }
 
-	//}
+		// g.addEdge(vertexMat[(i / (W)) + 1][(i % (W))], vertexMat[(i /
+		// (W))][(i % (W))],
+		// new WormEdge(vertexMat[(i / (W)) + 1][(i % (W))], vertexMat[(i /
+		// (W))][(i % (W))]));
+		// // System.out.println(new Point((i/W), ((i%W)))+" "+new
+		// // Point(((i/W)+1), (((i%W)))));
+		// }
+		// // top
+		// if (i / W > 0) {
+		// g.addEdge(vertexMat[(i / (W)) - 1][(i % (W))], vertexMat[(i /
+		// (W))][(i % (W))],
+		// new WormEdge(vertexMat[(i / (W)) - 1][(i % (W))], vertexMat[(i /
+		// (W))][(i % (W))]));
+		// g.addEdge(vertexMat[(i / (W))][(i % (W))], vertexMat[(i / (W)) -
+		// 1][(i % (W))],
+		// new WormEdge(vertexMat[(i / (W))][(i % (W))], vertexMat[(i / (W))
+		// - 1][(i % (W))]));
+		// System.out.println(new Point((i/W), ((i%W)))+" "+new
+		// Point(((i/W)-1), (((i%W)))));
+		// }
+	}
+
+	// }
 
 	public static DijkstraShortestPath findShortestPathLength(WormVertex ver) // calculating
 																				// dijkstra
 	{
 		// System.out.println("x:"+_x+" y:"+_y);
-		 System.out.println("i: "+_y / 42+" j: "+_x / 42);
+		System.out.println("i: " + _y / 42 + " j: " + _x / 42);
 		DijkstraShortestPath min;
 		// System.out.println(g.containsVertex(ver));
 		// System.out.println(g.containsVertex(vertexMat[(_y+1) / 42][_x /
 		// 42]));
 		// System.out.println(g.containsVertex(vertexMat[_y / 42][_x / 42]));
-		 min = new DijkstraShortestPath(g, ver, vertexMat[_y / 42][_x / 42]);
-//		System.out.println("i: " + _y / 6 + " j: " + _x / 6);
-//		min = new DijkstraShortestPath(g, ver, vertexMat[_y / 6][_x / 6]);
+		min = new DijkstraShortestPath(g, ver, vertexMat[_y / 42][_x / 42]);
+		// System.out.println("i: " + _y / 6 + " j: " + _x / 6);
+		// min = new DijkstraShortestPath(g, ver, vertexMat[_y / 6][_x / 6]);
 		System.out.println("path: " + min.getPathEdgeList().size());
 		return min;
 
@@ -223,15 +225,15 @@ public class GraphFacilities {
 												// points to be at
 		WormEdge edge;
 		edge = WormEdge.class.cast(enemy.getPath().getPathEdgeList().remove(0));// first
-																			// edge
-//		enemy._prevX = enemy.getX();
-//		enemy._prevY = enemy.getY();
+		// edge
+		// enemy._prevX = enemy.getX();
+		// enemy._prevY = enemy.getY();
 		enemy.setLocation(((int) edge.getDestVertx().getLocation().getX() * 42),
 				(int) edge.getDestVertx().getLocation().getY() * 42);
-//		enemy.setLocation(((int) edge.getDestVertx().getLocation().getX() * 6),
-//				(int) edge.getDestVertx().getLocation().getY() * 6);
-//		enemy.setLocation(((int) edge.getDestVertx().getLocation().getX() * 6),
-//				(int) edge.getDestVertx().getLocation().getY() * 6);
+		// enemy.setLocation(((int) edge.getDestVertx().getLocation().getX() * 6),
+		// (int) edge.getDestVertx().getLocation().getY() * 6);
+		// enemy.setLocation(((int) edge.getDestVertx().getLocation().getX() * 6),
+		// (int) edge.getDestVertx().getLocation().getY() * 6);
 	}
 
 	public static void removeEdgesAllDirections(int xOffset, int yOffset)// removing

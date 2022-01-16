@@ -23,8 +23,6 @@ public class InstructionsPanel extends JPanel {
 	private Rectangle _retrun = new Rectangle(168, 154, 39, 39);
 	private LinkedList<ChangeScreensInterface> _listeners;
 	private static String _prevScreen;// which screen changed to instructions
-	private Music _pressed;
-	private Music _pressedBack;
 
 	/**
 	 * rebooting the variables
@@ -33,7 +31,7 @@ public class InstructionsPanel extends JPanel {
 		// TODO Auto-generated constructor stub
 		ImageIcon imgI = new ImageIcon("src/Images/An Overview.png");
 		_imgBackground = imgI.getImage();
-		_listeners = new LinkedList();
+		_listeners = new LinkedList<ChangeScreensInterface>();
 		setPreferredSize(new Dimension(GameFrame.sizeOfScreenX, GameFrame.sizeOfScreenY));
 		this.setLayout(null);
 		addMouseListener(new MouseAdapter() {
@@ -42,12 +40,12 @@ public class InstructionsPanel extends JPanel {
 				// TODO Auto-generated method stub
 				super.mousePressed(e);
 				if (_controls.contains(e.getPoint())) {
-					_pressed = new Music("\\sounds\\buttonPressed.wav");
+					new Music("\\sounds\\buttonPressed.wav");
 					InstControlsPanel.setPrevScreen(_prevScreen);
 					for (ChangeScreensInterface hl : _listeners)
 						hl.changeScreenType(ScreenTypes.Controls);
 				} else if (_retrun.contains(e.getPoint())) {
-					_pressedBack = new Music("\\sounds\\backPressed.wav");
+					new Music("\\sounds\\backPressed.wav");
 					if (_prevScreen == "menu") {
 						for (ChangeScreensInterface hl : _listeners)
 							hl.changeScreenType(ScreenTypes.MainMenu);

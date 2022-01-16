@@ -10,16 +10,16 @@ import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
 import javax.swing.Timer;
 
-import org.jgrapht.alg.DijkstraShortestPath;
 /**
  * Class of each worm in the game
+ * 
  * @author Ranny Elyashiv
  *
  */
 public class Sprite {
 	private GamePanel _gameView;// the panel the photo will sit on
-	
-	//worm variables
+
+	// worm variables
 	protected int _bmpColumns;
 	private int _bmpRows;
 	private int _x;
@@ -28,8 +28,8 @@ public class Sprite {
 	private int _height;
 	protected int _currentFrame = 4;
 	private int _currentRow = 1;
-	
-	//grenade variables
+
+	// grenade variables
 	private int _bmpColumnsG = 8;
 	private int _bmpRowsG = 2;
 	private double _xG;
@@ -38,12 +38,12 @@ public class Sprite {
 	private int _heightG;
 	private int _currentFrameG;
 	private int _currentRowG;
-	
+
 	protected Rectangle _recW1, _recW2, _recG1, _recG2;
 	private int _xSpeed;
 	private int _ySpeed;
-	
-	//images variables
+
+	// images variables
 	private ImageIcon _imgIcon;
 	private Image _img;
 	public Img _name;
@@ -51,7 +51,7 @@ public class Sprite {
 	private Image _grenade;
 	protected Image _explotion;
 
-	//aim variables
+	// aim variables
 	private double _m;
 	private Point _p1;
 	private Point _p2;
@@ -59,24 +59,24 @@ public class Sprite {
 	private int _aimCounter;
 	private double _angle = 0;
 
-	//direction variables
+	// direction variables
 	private double _incline;
 	private int _direct = 0;
 	private int _side;
-	
+
 	private int _hp = 100;
-	
-	//status variables
+
+	// status variables
 	protected boolean _isJumping = false;
 	protected boolean _isAiming = false;
 	protected boolean _isShooting = false;
 	protected boolean _exploded = false;
-	
-	//team variables
+
+	// team variables
 	public int _teamNum;
 	private String _teamColor;
 
-	//timer variables
+	// timer variables
 	public Timer _walkTimer;
 	public Timer _shootTimer;
 	public Timer _jumpTimer;
@@ -84,14 +84,15 @@ public class Sprite {
 
 	/**
 	 * Ctor
+	 * 
 	 * @param gameView: the panel the photo will sit on
-	 * @param cols: sprite image cols
-	 * @param rows: sprite image rows
-	 * @param tn: team number
-	 * @param tc: team color
-	 * @param name: worm name
-	 * @param x: x cord
-	 * @param y: y cord
+	 * @param cols:     sprite image cols
+	 * @param rows:     sprite image rows
+	 * @param tn:       team number
+	 * @param tc:       team color
+	 * @param name:     worm name
+	 * @param x:        x cord
+	 * @param y:        y cord
 	 */
 	public Sprite(GamePanel gameView, int cols, int rows, int tn, String tc, String name, int x, int y) {
 		_gameView = gameView;
@@ -117,8 +118,8 @@ public class Sprite {
 		_ySpeed = 6;
 		_name = new Img("Images\\names\\" + name + "-" + _teamColor + ".png", _x, _y - 30, 80, 25);
 		_hpImg = new Img("Images\\hp\\" + _hp + ".png", _x + 9, _y - 5, 40, 15);
-		
-		//walk timer
+
+		// walk timer
 		_walkTimer = new Timer(100, new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (_currentRow == 0) {
@@ -162,7 +163,7 @@ public class Sprite {
 			}
 		});
 
-		//shoot timer
+		// shoot timer
 		_shootTimer = new Timer(50, new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				_xG += 15 * _direct;
@@ -185,7 +186,7 @@ public class Sprite {
 			}
 		});
 
-		//jump timer
+		// jump timer
 		_jumpTimer = new Timer(30, new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (_gameView.isBlocked() || _angle >= 7.09) {
@@ -212,6 +213,7 @@ public class Sprite {
 
 	/**
 	 * calculating y on line
+	 * 
 	 * @return y
 	 */
 	public int lineQuery() {
@@ -228,9 +230,10 @@ public class Sprite {
 
 	/**
 	 * updating the intention cords
-	 * @param d: direction 1 or -1
+	 * 
+	 * @param d:    direction 1 or -1
 	 * @param side: right=1 or left=-1
-	 * @param r: up=1 or down=-1
+	 * @param r:    up=1 or down=-1
 	 */
 	public void aim(int d, int side, int r) {
 		if (r == 1) {
@@ -265,6 +268,7 @@ public class Sprite {
 
 	/**
 	 * initalize the intention according to the current incline
+	 * 
 	 * @param side
 	 * @param incline
 	 */
@@ -291,6 +295,7 @@ public class Sprite {
 
 	/**
 	 * starts shoot timer
+	 * 
 	 * @param d
 	 */
 	public void shoot(int d) {
@@ -307,6 +312,7 @@ public class Sprite {
 
 	/**
 	 * calculating size of damage
+	 * 
 	 * @param xExplode
 	 * @param yExplode
 	 */
@@ -337,6 +343,7 @@ public class Sprite {
 
 	/**
 	 * starts jump timer
+	 * 
 	 * @param d
 	 * @param ang
 	 */
@@ -457,6 +464,7 @@ public class Sprite {
 
 	/**
 	 * draws the worm
+	 * 
 	 * @param g
 	 */
 	public void drawImg(Graphics g) {

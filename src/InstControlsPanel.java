@@ -23,8 +23,6 @@ public class InstControlsPanel extends JPanel {
 	private Rectangle _return = new Rectangle(168, 154, 39, 39);// exit from instructions button area
 	private LinkedList<ChangeScreensInterface> _listeners;
 	private static String _prevScreen;// which screen changed to instructions
-	private Music _pressed;
-	private Music _pressedBack;
 
 	/**
 	 * Ctor
@@ -33,7 +31,7 @@ public class InstControlsPanel extends JPanel {
 		// TODO Auto-generated constructor stub
 		ImageIcon imgI = new ImageIcon("src/Images/Controls.png");
 		_imgBackground = imgI.getImage();
-		_listeners = new LinkedList();
+		_listeners = new LinkedList<ChangeScreensInterface>();
 		setPreferredSize(new Dimension(GameFrame.sizeOfScreenX, GameFrame.sizeOfScreenY));
 		this.setLayout(null);
 		addMouseListener(new MouseAdapter() {
@@ -42,11 +40,11 @@ public class InstControlsPanel extends JPanel {
 				// TODO Auto-generated method stub
 				super.mousePressed(e);
 				if (_Overview.contains(e.getPoint())) {
-					_pressed = new Music("\\sounds\\buttonPressed.wav");
+					new Music("\\sounds\\buttonPressed.wav");
 					for (ChangeScreensInterface hl : _listeners)
 						hl.changeScreenType(ScreenTypes.OverView);
 				} else if (_return.contains(e.getPoint())) {
-					_pressedBack = new Music("\\sounds\\backPressed.wav");
+					new Music("\\sounds\\backPressed.wav");
 					if (_prevScreen == "menu") {
 						for (ChangeScreensInterface hl : _listeners)
 							hl.changeScreenType(ScreenTypes.MainMenu);

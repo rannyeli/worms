@@ -14,8 +14,8 @@ import javax.swing.JFrame;
  */
 public class GameFrame extends JFrame implements ActionListener, ChangeScreensInterface {
 
-	public static Music _menu;//menu music
-	private ImageIcon _logo;//frame logo
+	public static Music _menu;// menu music
+	private ImageIcon _logo;// frame logo
 	private GamePanel _gamePanel;// the game panel
 	private OpeningPanel _openingPanel;// the opening panel
 	private InstructionsPanel _instructionsPanel;// the instruction panel
@@ -43,7 +43,7 @@ public class GameFrame extends JFrame implements ActionListener, ChangeScreensIn
 		this.add(_openingPanel);
 		_openingPanel.setBounds(0, 0, sizeOfScreenX, sizeOfScreenX);
 		_openingPanel.addListener(this);
-		_menu=new Music("\\sounds\\menu.wav");
+		_menu = new Music("\\sounds\\menu.wav");
 		_menu.Loop();
 
 		_instructionsPanel = new InstructionsPanel();
@@ -73,7 +73,7 @@ public class GameFrame extends JFrame implements ActionListener, ChangeScreensIn
 
 	// creating game frame object
 	public static void main(String[] args) {
-		GameFrame res = new GameFrame();
+		new GameFrame();
 	}
 
 	@Override
