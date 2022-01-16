@@ -12,6 +12,7 @@ import javax.swing.JPanel;
 
 /**
  * Opening panel
+ * 
  * @author Ranny Elyashiv
  *
  */
@@ -30,7 +31,7 @@ public class OpeningPanel extends JPanel {
 		// TODO Auto-generated constructor stub
 		ImageIcon imgI = new ImageIcon("src/Images/WormsMainMenu.png");
 		_imgBackground = imgI.getImage();
-		_listeners = new LinkedList<>();
+		_listeners = new LinkedList();
 		setPreferredSize(new Dimension(GameFrame.sizeOfScreenX, GameFrame.sizeOfScreenY));
 		this.setLayout(null);
 		addMouseListener(new MouseAdapter() {
@@ -38,18 +39,17 @@ public class OpeningPanel extends JPanel {
 			public void mousePressed(MouseEvent e) {
 				// TODO Auto-generated method stub
 				super.mousePressed(e);
-				if (_start.contains(e.getPoint())){
-					_pressed=new Music("\\sounds\\buttonPressed.wav");
+				if (_start.contains(e.getPoint())) {
+					_pressed = new Music("\\sounds\\buttonPressed.wav");
 					for (ChangeScreensInterface hl : _listeners)
 						hl.changeScreenType(ScreenTypes.GameOptions);
-				}
-				else if (_inst.contains(e.getPoint())) {
-					_pressed=new Music("\\sounds\\buttonPressed.wav");
+				} else if (_inst.contains(e.getPoint())) {
+					_pressed = new Music("\\sounds\\buttonPressed.wav");
 					InstructionsPanel.setPrevScreen("menu");
 					for (ChangeScreensInterface hl : _listeners)
 						hl.changeScreenType(ScreenTypes.OverView);
-				} else if (_exit.contains(e.getPoint())){
-					_pressed=new Music("\\sounds\\buttonPressed.wav");
+				} else if (_exit.contains(e.getPoint())) {
+					_pressed = new Music("\\sounds\\buttonPressed.wav");
 					System.exit(0);
 				}
 			}
@@ -58,6 +58,7 @@ public class OpeningPanel extends JPanel {
 
 	/**
 	 * adds a new listener to listeners list
+	 * 
 	 * @param toAdd
 	 */
 	public void addListener(ChangeScreensInterface toAdd) {

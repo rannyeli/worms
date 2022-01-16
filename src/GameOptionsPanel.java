@@ -34,7 +34,7 @@ public class GameOptionsPanel extends JPanel {
 	private LinkedList<ChangeScreensInterface> _listeners;
 	private static int _numOfWorms;
 	private static int _teamNum;// usa-1, israel-2, russia-3
-	
+
 	private Music _pressed;
 	private Music _pressedBack;
 	private Music _over;
@@ -57,7 +57,7 @@ public class GameOptionsPanel extends JPanel {
 		_plusL = new Img("Images\\plus.png", 635, 445, 25, 25);
 		_minusL = new Img("Images\\minus.png", 547, 452, 22, 10);
 		_number = new Img("Images\\3.png", 590, 444, 25, 25);
-		_listeners = new LinkedList<>();
+		_listeners = new LinkedList();
 		_buttons = new JButton[5];
 		for (int i = 0; i < 5; i++) {
 			_buttons[i] = new JButton();
@@ -86,7 +86,7 @@ public class GameOptionsPanel extends JPanel {
 			public void mouseEntered(MouseEvent e) {
 				// TODO Auto-generated method stub
 				super.mouseEntered(e);
-				_over=new Music("\\sounds\\overButton.wav");
+				_over = new Music("\\sounds\\overButton.wav");
 				_usaLayer.setPath("Images\\USA-layer-s.png");
 				repaint();
 			}
@@ -117,7 +117,7 @@ public class GameOptionsPanel extends JPanel {
 			public void mouseEntered(MouseEvent e) {
 				// TODO Auto-generated method stub
 				super.mouseEntered(e);
-				_over=new Music("\\sounds\\overButton.wav");
+				_over = new Music("\\sounds\\overButton.wav");
 				_israelLayer.setPath("Images\\Israel-layer-s.png");
 				repaint();
 			}
@@ -148,7 +148,7 @@ public class GameOptionsPanel extends JPanel {
 			public void mouseEntered(MouseEvent e) {
 				// TODO Auto-generated method stub
 				super.mouseEntered(e);
-				_over=new Music("\\sounds\\overButton.wav");
+				_over = new Music("\\sounds\\overButton.wav");
 				_russiaLayer.setPath("Images\\Russia-layer-s.png");
 				repaint();
 			}
@@ -179,7 +179,7 @@ public class GameOptionsPanel extends JPanel {
 			public void mouseEntered(MouseEvent e) {
 				// TODO Auto-generated method stub
 				super.mouseEntered(e);
-				_over=new Music("\\sounds\\overButton.wav");
+				_over = new Music("\\sounds\\overButton.wav");
 				_plusL.setPath("Images\\plus-s.png");
 				repaint();
 			}
@@ -208,7 +208,7 @@ public class GameOptionsPanel extends JPanel {
 			public void mouseEntered(MouseEvent e) {
 				// TODO Auto-generated method stub
 				super.mouseEntered(e);
-				_over=new Music("\\sounds\\overButton.wav");
+				_over = new Music("\\sounds\\overButton.wav");
 				_minusL.setPath("Images\\minus-s.png");
 				repaint();
 			}
@@ -229,14 +229,14 @@ public class GameOptionsPanel extends JPanel {
 				// TODO Auto-generated method stub
 				super.mousePressed(e);
 				if (_game.contains(e.getPoint())) {
-					_pressed=new Music("\\sounds\\buttonPressed.wav");
+					_pressed = new Music("\\sounds\\buttonPressed.wav");
 					if (_teamNum != 0) {
 						for (ChangeScreensInterface hl : _listeners)
 							hl.changeScreenType(ScreenTypes.Game);
 						_gameListener.restart();
 					}
-				} else if (_mainMenu.contains(e.getPoint())){
-					_pressedBack=new Music("\\sounds\\backPressed.wav");
+				} else if (_mainMenu.contains(e.getPoint())) {
+					_pressedBack = new Music("\\sounds\\backPressed.wav");
 					for (ChangeScreensInterface hl : _listeners)
 						hl.changeScreenType(ScreenTypes.MainMenu);
 				}
@@ -247,6 +247,7 @@ public class GameOptionsPanel extends JPanel {
 
 	/**
 	 * adds a new listener to listeners list
+	 * 
 	 * @param toAdd
 	 */
 	public void addListener(ChangeScreensInterface toAdd) {

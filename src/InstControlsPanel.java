@@ -12,19 +12,20 @@ import javax.swing.JPanel;
 
 /**
  * Controls Instructions panel
+ * 
  * @author Ranny Elyashiv
  *
  */
 public class InstControlsPanel extends JPanel {
 
 	private Image _imgBackground;// the controls instruction image;
-	private Rectangle _Overview = new Rectangle(252, 106, 32, 32);//back button area
-	private Rectangle _return = new Rectangle(168, 154, 39, 39);//exit from instructions button area
+	private Rectangle _Overview = new Rectangle(252, 106, 32, 32);// back button area
+	private Rectangle _return = new Rectangle(168, 154, 39, 39);// exit from instructions button area
 	private LinkedList<ChangeScreensInterface> _listeners;
-	private static String _prevScreen;// which screen changed to instructions 
+	private static String _prevScreen;// which screen changed to instructions
 	private Music _pressed;
 	private Music _pressedBack;
-	
+
 	/**
 	 * Ctor
 	 */
@@ -32,7 +33,7 @@ public class InstControlsPanel extends JPanel {
 		// TODO Auto-generated constructor stub
 		ImageIcon imgI = new ImageIcon("src/Images/Controls.png");
 		_imgBackground = imgI.getImage();
-		_listeners = new LinkedList<>();
+		_listeners = new LinkedList();
 		setPreferredSize(new Dimension(GameFrame.sizeOfScreenX, GameFrame.sizeOfScreenY));
 		this.setLayout(null);
 		addMouseListener(new MouseAdapter() {
@@ -40,13 +41,12 @@ public class InstControlsPanel extends JPanel {
 			public void mousePressed(MouseEvent e) {
 				// TODO Auto-generated method stub
 				super.mousePressed(e);
-				if (_Overview.contains(e.getPoint())){
-					_pressed=new Music("\\sounds\\buttonPressed.wav");
+				if (_Overview.contains(e.getPoint())) {
+					_pressed = new Music("\\sounds\\buttonPressed.wav");
 					for (ChangeScreensInterface hl : _listeners)
 						hl.changeScreenType(ScreenTypes.OverView);
-				}
-				else if (_return.contains(e.getPoint())) {
-					_pressedBack=new Music("\\sounds\\backPressed.wav");
+				} else if (_return.contains(e.getPoint())) {
+					_pressedBack = new Music("\\sounds\\backPressed.wav");
 					if (_prevScreen == "menu") {
 						for (ChangeScreensInterface hl : _listeners)
 							hl.changeScreenType(ScreenTypes.MainMenu);
@@ -61,6 +61,7 @@ public class InstControlsPanel extends JPanel {
 
 	/**
 	 * adds a new listener to listeners list
+	 * 
 	 * @param toAdd
 	 */
 	public void addListener(ChangeScreensInterface toAdd) {
