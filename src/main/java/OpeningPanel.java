@@ -33,7 +33,7 @@ public class OpeningPanel extends JPanel {
 		// TODO Auto-generated constructor stub
 		ImageIcon imgI = new ImageIcon("src/Images/WormsMainMenu.png");
 		_imgBackground = imgI.getImage();
-		_listeners = new LinkedList<>();
+		_listeners = new LinkedList();
 		setPreferredSize(new Dimension(GameFrame.sizeOfScreenX, GameFrame.sizeOfScreenY));
 		this.setLayout(null);
 		addMouseListener(new MouseAdapter() {

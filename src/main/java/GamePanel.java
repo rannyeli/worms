@@ -121,14 +121,14 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseMot
 	 */
 	public GamePanel() {
 		_rnd = new Random();
-		_upPoints = new LinkedList<>();
-		_downPoints = new LinkedList<>();
-		_strightPoints = new LinkedList<>();
-		_blockPoints = new LinkedList<>();
-		_startPoints = new LinkedList<>();
-		_israelNames = new LinkedList<>();
-		_usaNames = new LinkedList<>();
-		_russiaNames = new LinkedList<>();
+		_upPoints = new LinkedList();
+		_downPoints = new LinkedList();
+		_strightPoints = new LinkedList();
+		_blockPoints = new LinkedList();
+		_startPoints = new LinkedList();
+		_israelNames = new LinkedList();
+		_usaNames = new LinkedList();
+		_russiaNames = new LinkedList();
 
 		// israel names
 		_israelNames.add("yosef");
@@ -157,7 +157,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseMot
 
 		_isWin = false;
 
-		_listeners = new LinkedList<>();
+		_listeners = new LinkedList();
 		_resume = new Rectangle(477, 181, 171, 75);
 		_restart = new Rectangle(477, 295, 171, 75);
 		_inst = new Rectangle(477, 404, 171, 75);
@@ -366,11 +366,11 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseMot
 	 */
 	@Override
 	public void restart() {
-		_upPoints = new LinkedList<>();
-		_downPoints = new LinkedList<>();
-		_strightPoints = new LinkedList<>();
-		_blockPoints = new LinkedList<>();
-		_startPoints = new LinkedList<>();
+		_upPoints = new LinkedList();
+		_downPoints = new LinkedList();
+		_strightPoints = new LinkedList();
+		_blockPoints = new LinkedList();
+		_startPoints = new LinkedList();
 		_turnTimer.stop();
 		_mapNumber = _rnd.nextInt(3) + 1;
 		Point p;

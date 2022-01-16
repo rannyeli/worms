@@ -34,7 +34,7 @@ public class InstructionsPanel extends JPanel {
 		// TODO Auto-generated constructor stub
 		ImageIcon imgI = new ImageIcon("src/Images/An Overview.png");
 		_imgBackground = imgI.getImage();
-		_listeners = new LinkedList<>();
+		_listeners = new LinkedList();
 		setPreferredSize(new Dimension(GameFrame.sizeOfScreenX, GameFrame.sizeOfScreenY));
 		this.setLayout(null);
 		addMouseListener(new MouseAdapter() {

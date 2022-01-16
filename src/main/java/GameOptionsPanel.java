@@ -58,7 +58,7 @@ public class GameOptionsPanel extends JPanel {
 		_plusL = new Img("Images\\plus.png", 635, 445, 25, 25);
 		_minusL = new Img("Images\\minus.png", 547, 452, 22, 10);
 		_number = new Img("Images\\3.png", 590, 444, 25, 25);
-		_listeners = new LinkedList<>();
+		_listeners = new LinkedList();
 		_buttons = new JButton[5];
 		for (int i = 0; i < 5; i++) {
 			_buttons[i] = new JButton();
