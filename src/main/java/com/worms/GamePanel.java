@@ -1,3 +1,5 @@
+package com.worms;
+
 
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -14,6 +16,9 @@ import java.awt.event.MouseMotionListener;
 import java.awt.geom.Line2D;
 import java.util.LinkedList;
 import java.util.Random;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -23,13 +28,13 @@ import javax.swing.Timer;
 /**
  * Game panel
  * 
- * @author Ranny Elyashiv
+ * @author Ran Elishayev
  *
  */
-public class GamePanel extends JPanel implements Runnable, KeyListener, MouseMotionListener, InitWormsInterface {
+public class GamePanel extends JPanel implements KeyListener, MouseMotionListener, InitWormsInterface {
 
-	private Thread _wormsThread;// computer thread
-	protected boolean _isRunning;
+	private ScheduledExecutorService _aiExecutor;
+	protected volatile boolean _isRunning;
 
 	// map variables
 	private int _numOfRows;
@@ -45,9 +50,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseMot
 	private LinkedList<Point> _strightPoints;
 	private LinkedList<Point> _blockPoints;
 	private LinkedList<Point> _startPoints;
-	private LinkedList<String> _israelNames;
-	private LinkedList<String> _usaNames;
-	private LinkedList<String> _russiaNames;
+	private final java.util.List<String> _israelNames = GameConfig.ISRAEL_NAMES;
+	private final java.util.List<String> _usaNames = GameConfig.USA_NAMES;
+	private final java.util.List<String> _russiaNames = GameConfig.RUSSIA_NAMES;
 	private Random _rnd;
 	private Image _gameImg;
 
@@ -101,9 +106,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseMot
 	// offset variables
 	protected static int _xOffSet = 0;
 	private int _lastX;
-	private int _mouseSpeedX = 20;
-	protected int _speedX = 2;
-	protected int _limit = 1150;
+	private int _mouseSpeedX = GameConfig.MOUSE_SCROLL_SPEED;
+	protected int _speedX = GameConfig.SCROLL_SPEED;
+	protected int _limit = GameConfig.SCREEN_WIDTH;
 
 	// music variables
 	protected Music _launch;
@@ -122,34 +127,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseMot
 		_strightPoints = new LinkedList<Point>();
 		_blockPoints = new LinkedList<Point>();
 		_startPoints = new LinkedList<Point>();
-		_israelNames = new LinkedList<String>();
-		_usaNames = new LinkedList<String>();
-		_russiaNames = new LinkedList<String>();
-
-		// israel names
-		_israelNames.add("yosef");
-		_israelNames.add("jacob");
-		_israelNames.add("yehuda");
-		_israelNames.add("david");
-		_israelNames.add("avraham");
-
-		// usa names
-		_usaNames.add("jhon");
-		_usaNames.add("thomas");
-		_usaNames.add("james");
-		_usaNames.add("michael");
-		_usaNames.add("louis");
-
-		// russia names
-		_russiaNames.add("alex");
-		_russiaNames.add("dmitry");
-		_russiaNames.add("igor");
-		_russiaNames.add("juri");
-		_russiaNames.add("emil");
-
-		_numOfRows = 16;
-		_numOfCols = 55;
-		_blockSize = 42;
+		_numOfRows = GameConfig.NUM_ROWS;
+		_numOfCols = GameConfig.NUM_COLS;
+		_blockSize = GameConfig.BLOCK_SIZE;
 
 		_isWin = false;
 
@@ -159,9 +139,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseMot
 		_inst = new Rectangle(477, 404, 171, 75);
 		_menu = new Rectangle(477, 514, 171, 75);
 		_isPaused = false;
-		_shadow = new Img("Images//shadow.png", 0, 0, 1150, 700);
-		_pausePanel = new Img("Images//pause.png", 330, 30, 475, 625);
-		_pauseB = new Img("Images//pauseButton.png", 20, 20, 50, 50);
+		_shadow = new Img("Images/shadow.png", 0, 0, GameConfig.SCREEN_WIDTH, GameConfig.SCREEN_HEIGHT);
+		_pausePanel = new Img("Images/pause.png", 330, 30, 475, 625);
+		_pauseB = new Img("Images/pauseButton.png", 20, 20, 50, 50);
 		_pauseBtn = new JButton();
 		_pauseBtn.setRolloverEnabled(false);
 		_pauseBtn.setBorderPainted(false);
@@ -171,10 +151,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseMot
 		_pauseBtn.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				// TODO Auto-generated method stub
 				super.mousePressed(e);
 				if (!_isWin) {
-					new Music("\\sounds\\buttonPressed.wav");
+					new Music("sounds/buttonPressed.wav");
 					_isPaused = true;
 					_BG.stop();
 					repaint();
@@ -183,14 +162,12 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseMot
 
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				// TODO Auto-generated method stub
 				super.mouseEntered(e);
-				new Music("\\sounds\\overButton.wav");
+				new Music("sounds/overButton.wav");
 			}
 
 			@Override
 			public void mouseExited(MouseEvent e) {
-				// TODO Auto-generated method stub
 				super.mouseExited(e);
 			}
 		});
@@ -202,7 +179,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseMot
 		this.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				// TODO Auto-generated method stub
 				super.mousePressed(e);
 				// System.out.println("(" + e.getX() + ", " + e.getY() + ")");
 				_lastX = e.getX();
@@ -210,24 +186,24 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseMot
 					_restart = new Rectangle(477, 295, 171, 75);
 					_menu = new Rectangle(477, 514, 171, 75);
 					if (_resume.contains(e.getPoint())) {
-						new Music("\\sounds\\buttonPressed.wav");
+						new Music("sounds/buttonPressed.wav");
 						_isPaused = false;
-						_BG = new Music("\\sounds\\" + _mapName + ".wav");
+						_BG = new Music("sounds/" + _mapName + ".wav");
 						_BG.Loop();
 						repaint();
 					} else if (_restart.contains(e.getPoint())) {
-						new Music("\\sounds\\buttonPressed.wav");
+						new Music("sounds/buttonPressed.wav");
 						restart();
 					} else if (_inst.contains(e.getPoint())) {
-						new Music("\\sounds\\buttonPressed.wav");
+						new Music("sounds/buttonPressed.wav");
 						_BG.stop();
 						InstructionsPanel.setPrevScreen("game");
 						for (ChangeScreensInterface hl : _listeners)
 							hl.changeScreenType(ScreenTypes.OverView);
 					} else if (_menu.contains(e.getPoint())) {
-						new Music("\\sounds\\backPressed.wav");
+						new Music("sounds/backPressed.wav");
 						_BG.stop();
-						GameFrame._menu = new Music("\\sounds\\menu.wav");
+						GameFrame._menu = new Music("sounds/menu.wav");
 						GameFrame._menu.Loop();
 						for (ChangeScreensInterface hl : _listeners)
 							hl.changeScreenType(ScreenTypes.MainMenu);
@@ -237,13 +213,13 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseMot
 					_restart = new Rectangle(343, 366, 171, 75);
 					_menu = new Rectangle(573, 366, 171, 75);
 					if (_restart.contains(e.getPoint())) {
-						new Music("\\sounds\\buttonPressed.wav");
+						new Music("sounds/buttonPressed.wav");
 						_winning.stop();
 						restart();
 					} else if (_menu.contains(e.getPoint())) {
-						new Music("\\sounds\\backPressed.wav");
+						new Music("sounds/backPressed.wav");
 						_winning.stop();
-						GameFrame._menu = new Music("\\sounds\\menu.wav");
+						GameFrame._menu = new Music("sounds/menu.wav");
 						GameFrame._menu.Loop();
 						for (ChangeScreensInterface hl : _listeners)
 							hl.changeScreenType(ScreenTypes.MainMenu);
@@ -258,7 +234,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseMot
 			public void actionPerformed(ActionEvent e) {
 				if (!_isPaused && !_isWin) {
 					_seconds--;
-					_timer.setPath("Images\\timer\\" + _seconds + ".png");
+					_timer.setPath("Images/timer/" + _seconds + ".png");
 					repaint();
 					if (_seconds == 0) {
 						if (_worm[_wormTurn] != null) {
@@ -291,14 +267,14 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseMot
 								}
 							}
 							_wormTurn = _b;
-							if (_worm[_wormTurn].getX() - _xOffSet < 1150)
+							if (_worm[_wormTurn].getX() - _xOffSet < GameConfig.SCREEN_WIDTH)
 								_direct = 1;
 							else
 								_direct = -1;
 						}
 						focusOnWorm();
-						_seconds = 30;
-						_timer.setPath("Images\\timer\\" + _seconds + ".png");
+						_seconds = GameConfig.TURN_DURATION_SECONDS;
+						_timer.setPath("Images/timer/" + _seconds + ".png");
 						repaint();
 					}
 				}
@@ -311,7 +287,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseMot
 	 * initalize all worms
 	 */
 	public void initWorms() {
-		// TODO Auto-generated method stub
 		_teamNum = GameOptionsPanel.getTeamNum();
 		_numOfWorms = GameOptionsPanel.getNumOfWorms();
 		_b = _numOfWorms - 1;
@@ -349,8 +324,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseMot
 			_startPoints.remove(j);
 		}
 		_wormTurn = _r;
-		_seconds = 30;
-		_timer = new Img("Images\\timer\\" + _seconds + ".png", 1000, 10, 140, 120);
+		_seconds = GameConfig.TURN_DURATION_SECONDS;
+		_timer = new Img("Images/timer/" + _seconds + ".png", 1000, 10, 140, 120);
 		_turnTimer.start();
 		repaint();
 		focusOnWorm();
@@ -1057,19 +1032,19 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseMot
 			p = new Point(28 + 1140, 199);
 			_startPoints.add(p);
 		}
-		_BG = new Music("\\sounds\\" + _mapName + ".wav");
+		_BG = new Music("sounds/" + _mapName + ".wav");
 		_BG.Loop();
-		ImageIcon imgI = new ImageIcon("src/Images/" + _mapName + ".jpg");
+		ImageIcon imgI = new ImageIcon(getClass().getClassLoader().getResource("Images/" + _mapName + ".jpg"));
 		_gameImg = imgI.getImage();
-		_block = new Img("Images\\blocks\\" + _mapName + "-1.png", 0, 0, _blockSize, _blockSize);
-		_map = new Map(_numOfRows, _numOfCols, "XmlFiles\\" + _mapName + ".xml");
+		_block = new Img("Images/blocks/" + _mapName + "-1.png", 0, 0, _blockSize, _blockSize);
+		_map = new Map(_numOfRows, _numOfCols, "XmlFiles/" + _mapName + ".xml");
 		for (int i = 0; i < _numOfWorms * 2; i++) {
 			_worm[i] = null;
 		}
 		_isPaused = false;
 		_isWin = false;
 		_xOffSet = 0;
-		_limit = 1150;
+		_limit = GameConfig.SCREEN_WIDTH;
 		stopRunning();
 		initWorms();
 		GraphFacilities.CreateGraph();
@@ -1094,32 +1069,32 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseMot
 		for (int i = 0; i < _numOfRows; i++) {
 			for (int j = 0; j < _numOfCols; j++) {
 				if (_map.get_map()[i][j] == 1) {
-					_block.setPath("Images\\blocks\\" + _mapName + "-1.png");
+					_block.setPath("Images/blocks/" + _mapName + "-1.png");
 					_block.setImgCords((j * _blockSize) + _xOffSet, (i) * _blockSize);
 					_block.drawImg(g);
 				}
 				if (_map.get_map()[i][j] == 2) {
-					_block.setPath("Images\\blocks\\" + _mapName + "-2.png");
+					_block.setPath("Images/blocks/" + _mapName + "-2.png");
 					_block.setImgCords((j * _blockSize) + _xOffSet, (i) * _blockSize);
 					_block.drawImg(g);
 				}
 				if (_map.get_map()[i][j] == 3) {
-					_block.setPath("Images\\blocks\\" + _mapName + "-3.png");
+					_block.setPath("Images/blocks/" + _mapName + "-3.png");
 					_block.setImgCords((j * _blockSize) + _xOffSet, (i) * _blockSize);
 					_block.drawImg(g);
 				}
 				if (_map.get_map()[i][j] == 4) {
-					_block.setPath("Images\\blocks\\" + _mapName + "-4.png");
+					_block.setPath("Images/blocks/" + _mapName + "-4.png");
 					_block.setImgCords((j * _blockSize) + _xOffSet, (i) * _blockSize);
 					_block.drawImg(g);
 				}
 				if (_map.get_map()[i][j] == 5) {
-					_block.setPath("Images\\blocks\\" + _mapName + "-5.png");
+					_block.setPath("Images/blocks/" + _mapName + "-5.png");
 					_block.setImgCords((j * _blockSize) + _xOffSet, (i) * _blockSize);
 					_block.drawImg(g);
 				}
 				if (_map.get_map()[i][j] == 6) {
-					_block.setPath("Images\\blocks\\" + _mapName + "-6.png");
+					_block.setPath("Images/blocks/" + _mapName + "-6.png");
 					_block.setImgCords((j * _blockSize) + _xOffSet, (i) * _blockSize);
 					_block.drawImg(g);
 				}
@@ -1127,16 +1102,16 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseMot
 		}
 		if (_worm[_wormTurn] != null) {
 			if (_worm[_wormTurn]._isJumping) {
-				_imgIcon = new ImageIcon(this.getClass().getClassLoader().getResource("Images\\sprites\\jump.png"));
+				_imgIcon = new ImageIcon(this.getClass().getClassLoader().getResource("Images/sprites/jump.png"));
 				_wormImg = _imgIcon.getImage();
 				_worm[_wormTurn].setImage(_wormImg, 1, 2);
 			} else if (_worm[_wormTurn]._isAiming) {
 				_imgIcon = new ImageIcon(this.getClass().getClassLoader()
-						.getResource("Images\\sprites\\shoot_" + _worm[_wormTurn].getTeamColor() + ".png"));
+						.getResource("Images/sprites/shoot_" + _worm[_wormTurn].getTeamColor() + ".png"));
 				_wormImg = _imgIcon.getImage();
 				_worm[_wormTurn].setImage(_wormImg, 6, 5);
 			} else {
-				_imgIcon = new ImageIcon(this.getClass().getClassLoader().getResource("Images\\sprites\\walk.png"));
+				_imgIcon = new ImageIcon(this.getClass().getClassLoader().getResource("Images/sprites/walk.png"));
 				_wormImg = _imgIcon.getImage();
 				_worm[_wormTurn].setImage(_wormImg, 6, 5);
 			}
@@ -1145,62 +1120,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseMot
 					_worm[i].drawImg(g);
 				}
 			}
-			// g.drawLine(_worm[_wormTurn].getX() + _worm[_wormTurn].getWidth()
-			// -
-			// 25, _worm[_wormTurn].getY() + 10,
-			// _worm[_wormTurn].getX() + _worm[_wormTurn].getWidth() - 25,
-			// _worm[_wormTurn].getY() + _worm[_wormTurn].getHeight() - 7);
-			// g.drawLine(_worm[_wormTurn].getX() + 27, _worm[_wormTurn].getY()
-			// +
-			// 10, _worm[_wormTurn].getX() + 27,
-			// _worm[_wormTurn].getY() + _worm[_wormTurn].getHeight() - 7);
-			// g.drawLine(_worm[_wormTurn].getX() + 25, _worm[_wormTurn].getY()
-			// +
-			// _worm[_wormTurn].getHeight() - 11,
-			// _worm[_wormTurn].getX() + _worm[_wormTurn].getWidth() - 25,
-			// _worm[_wormTurn].getY() + _worm[_wormTurn].getHeight() - 11);
-			// for (int i = 0; i < _strightPoints.size(); i += 2) {
-			// g.drawLine((int) _strightPoints.get(i).getX() + _xOffSet, (int)
-			// _strightPoints.get(i).getY(),
-			// (int) _strightPoints.get(i + 1).getX() + _xOffSet, (int)
-			// _strightPoints.get(i + 1).getY());
-			// }
-			// for (int i = 0; i < _upPoints.size(); i += 2) {
-			// g.drawLine((int) _upPoints.get(i).getX() + _xOffSet, (int)
-			// _upPoints.get(i).getY(),
-			// (int) _upPoints.get(i + 1).getX() + _xOffSet, (int)
-			// _upPoints.get(i +
-			// 1).getY());
-			// }
-			// for (int i = 0; i < _downPoints.size(); i += 2) {
-			// g.drawLine((int) _downPoints.get(i).getX() + _xOffSet, (int)
-			// _downPoints.get(i).getY(),
-			// (int) _downPoints.get(i + 1).getX() + _xOffSet, (int)
-			// _downPoints.get(i + 1).getY());
-			// }
-			// for (int i = 0; i < _blockPoints.size(); i += 2) {
-			// g.drawLine((int) _blockPoints.get(i).getX() + _xOffSet, (int)
-			// _blockPoints.get(i).getY(),
-			// (int) _blockPoints.get(i + 1).getX() + _xOffSet, (int)
-			// _blockPoints.get(i + 1).getY());
-			// }
-			// g.drawLine((int) _worm[_wormTurn].getXM() + 10,
-			// (int) _worm[_wormTurn].getYM() + _worm[_wormTurn].getHeightM() -
-			// 11,
-			// (int) _worm[_wormTurn].getXM() + _worm[_wormTurn].getWidthM() -
-			// 25,
-			// (int) _worm[_wormTurn].getYM() + _worm[_wormTurn].getHeightM() -
-			// 5);
-			// g.drawRect((int) _worm[_wormTurn].getXM()+5, (int)
-			// _worm[_wormTurn].getYM()+5, _worm[_wormTurn].getWidthM()-12,
-			// _worm[_wormTurn].getHeightM()-12);
-			// g.drawRect(_worm[_wormTurn].getX() + 10, _worm[_wormTurn].getY()
-			// +
-			// 15, _worm[_wormTurn].getWidth() - 30,
-			// _worm[_wormTurn].getHeight() - 30);
-			// g.drawLine(_worm[_wormTurn].getX() + 20, _worm[_wormTurn].getY()
-			// + 40, _worm[_numOfWorms].getX() + 20,
-			// _worm[_numOfWorms].getY() + 40);
 			if (_worm[_wormTurn]._exploded) {
 				try {
 					g.drawImage(_worm[_wormTurn]._explotion, (int) _worm[_wormTurn].getXG() - 20,
@@ -1258,7 +1177,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseMot
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			if (_intention.getY() > retYOnLine(_intention.getX())) {
@@ -1290,7 +1208,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseMot
 		_worm[_wormTurn]._isShooting = true;
 		_worm[_wormTurn].shoot((_worm[_wormTurn].getCurrentRow() % 2 == 0) ? 1 : -1);
 		_worm[_wormTurn].setCurrentFrame(4);
-		_launch = new Music("\\sounds\\launch.wav");
+		_launch = new Music("sounds/launch.wav");
 		_turnTimer.stop();
 		_seconds = 1;
 		repaint();
@@ -1329,70 +1247,69 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseMot
 	/**
 	 * while the thread is working only the computer player will be able to move
 	 */
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
-		boolean isRangeFound = false;
-		int right = 0, left = 0;
-		while (_isRunning) {
-			try {
-				if (_teamTurn == -1 && !_isPaused && !_isWin) {
-					if (!isRangeFound && !_worm[_wormTurn]._isJumping) {
-						if (findWormToShoot() == true) {
-							isRangeFound = true;
-							_worm[_wormTurn]._walkTimer.stop();
-							repaint();
-							compAim();
-							compShoot();
-							right = 0;
-							left = 0;
-							repaint();
-						} else {
-							if (!(right > 0 && left > 0)) {
-								if (_worm[getNearestWorm()].getX() > _worm[_wormTurn].getX()) {
-									compGoRight();
-									right++;
-								} else {
-									compGoLeft();
-									left++;
-								}
+	private boolean _aiRangeFound = false;
+	private int _aiRight = 0, _aiLeft = 0;
+
+	private void aiTick() {
+		if (!_isRunning) return;
+		try {
+			if (_teamTurn == -1 && !_isPaused && !_isWin) {
+				if (!_aiRangeFound && !_worm[_wormTurn]._isJumping) {
+					if (findWormToShoot()) {
+						_aiRangeFound = true;
+						_worm[_wormTurn]._walkTimer.stop();
+						repaint();
+						compAim();
+						compShoot();
+						_aiRight = 0;
+						_aiLeft = 0;
+						repaint();
+					} else {
+						if (!(_aiRight > 0 && _aiLeft > 0)) {
+							if (_worm[getNearestWorm()].getX() > _worm[_wormTurn].getX()) {
+								compGoRight();
+								_aiRight++;
 							} else {
-								if (_direct == 1)
-									compGoRight();
-								else
-									compGoLeft();
+								compGoLeft();
+								_aiLeft++;
 							}
+						} else {
+							if (_direct == 1)
+								compGoRight();
+							else
+								compGoLeft();
 						}
 					}
-				} else {
-					isRangeFound = false;
 				}
-				Thread.sleep(20);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			} else {
+				_aiRangeFound = false;
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-
 	}
 
-	/**
-	 * starting the thread
-	 */
 	public void startRunning() {
 		if (!_isRunning) {
 			_isRunning = true;
-			_wormsThread = new Thread(this);
-			_wormsThread.start();
+			_aiRangeFound = false;
+			_aiRight = 0;
+			_aiLeft = 0;
+			_aiExecutor = Executors.newSingleThreadScheduledExecutor(r -> {
+				Thread t = new Thread(r, "worms-ai");
+				t.setDaemon(true);
+				return t;
+			});
+			_aiExecutor.scheduleAtFixedRate(this::aiTick, 0, GameConfig.AI_TICK_MS, TimeUnit.MILLISECONDS);
 		}
 	}
 
-	/**
-	 * stopping the thread
-	 */
 	public void stopRunning() {
 		_isRunning = false;
-		_wormsThread = null;
+		if (_aiExecutor != null) {
+			_aiExecutor.shutdownNow();
+			_aiExecutor = null;
+		}
 	}
 
 	/**
@@ -1573,7 +1490,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseMot
 			if (grenadeRec.intersectsLine(l2)) {
 				checkHits();
 				_turnTimer.start();
-				_explotion = new Music("\\sounds\\explotion.wav");
+				_explotion = new Music("sounds/explotion.wav");
 				return true;
 			}
 		}
@@ -1583,7 +1500,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseMot
 			if (grenadeRec.intersectsLine(l2)) {
 				checkHits();
 				_turnTimer.start();
-				_explotion = new Music("\\sounds\\explotion.wav");
+				_explotion = new Music("sounds/explotion.wav");
 				return true;
 			}
 		}
@@ -1593,7 +1510,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseMot
 			if (grenadeRec.intersectsLine(l2)) {
 				checkHits();
 				_turnTimer.start();
-				_explotion = new Music("\\sounds\\explotion.wav");
+				_explotion = new Music("sounds/explotion.wav");
 				return true;
 			}
 		}
@@ -1603,7 +1520,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseMot
 			if (grenadeRec.intersectsLine(l2)) {
 				checkHits();
 				_turnTimer.start();
-				_explotion = new Music("\\sounds\\explotion.wav");
+				_explotion = new Music("sounds/explotion.wav");
 				return true;
 			}
 		}
@@ -1626,7 +1543,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseMot
 				if (grenadeRec.intersects(wormRec)) {
 					checkHits();
 					_turnTimer.start();
-					_explotion = new Music("\\sounds\\explotion.wav");
+					_explotion = new Music("sounds/explotion.wav");
 					return true;
 				}
 			}
@@ -1668,7 +1585,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseMot
 		String winTeam = "";
 		for (int i = 0; i < _numOfWorms * 2; i++) {
 			if (_worm[i] != null) {
-				if (_worm[i].getTeamColor() == "red")
+				if ("red".equals(_worm[i].getTeamColor()))
 					reds++;
 				else
 					blues++;
@@ -1681,7 +1598,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseMot
 				winTeam = "israel";
 			else
 				winTeam = "russia";
-			_winPanel = new Img("Images//winners//" + winTeam + " won-red.png", 0, 0, 1150, 700);
+			_winPanel = new Img("Images/winners/" + winTeam + " won-red.png", 0, 0, GameConfig.SCREEN_WIDTH, GameConfig.SCREEN_HEIGHT);
 			_isWin = true;
 			_turnTimer.stop();
 			stopRunning();
@@ -1692,14 +1609,14 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseMot
 				winTeam = "israel";
 			else
 				winTeam = "russia";
-			_winPanel = new Img("Images//winners//" + winTeam + " won-blue.png", 0, 0, 1150, 700);
+			_winPanel = new Img("Images/winners/" + winTeam + " won-blue.png", 0, 0, GameConfig.SCREEN_WIDTH, GameConfig.SCREEN_HEIGHT);
 			_isWin = true;
 			_turnTimer.stop();
 			stopRunning();
 		}
-		if (winTeam != "") {
+		if (!winTeam.isEmpty()) {
 			_BG.stop();
-			_winning = new Music("\\sounds\\" + winTeam + ".wav");
+			_winning = new Music("sounds/" + winTeam + ".wav");
 		}
 	}
 
@@ -1803,7 +1720,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseMot
 
 	@Override
 	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -1812,7 +1728,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseMot
 	 */
 	@Override
 	public void keyPressed(KeyEvent e) {
-		// TODO Auto-generated method stub
 		_pressedCode = e.getKeyCode();
 		if (!_isPaused && !_worm[_wormTurn]._isShooting && _teamTurn == 1 && !_isWin) {
 			if (_pressedCode == KeyEvent.VK_RIGHT) {
@@ -1862,7 +1777,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseMot
 					_worm[_wormTurn].setCurrentFrame(_worm[_wormTurn].getCurrentRow() % 2);
 					_worm[_wormTurn].setCurrentRow(0);
 					_worm[_wormTurn].jump((_worm[_wormTurn].getCurrentFrame() == 0) ? 1 : -1, 4);
-					_jump = new Music("\\sounds\\jump.wav");
+					_jump = new Music("sounds/jump.wav");
 					repaint();
 				}
 			}
@@ -1879,7 +1794,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseMot
 					_worm[_wormTurn]._isAiming = false;
 					_worm[_wormTurn]._isShooting = true;
 					_worm[_wormTurn].shoot((_worm[_wormTurn].getCurrentRow() % 2 == 0) ? 1 : -1);
-					_launch = new Music("\\sounds\\launch.wav");
+					_launch = new Music("sounds/launch.wav");
 					_turnTimer.stop();
 					_seconds = 1;
 				}
@@ -1895,7 +1810,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseMot
 	 */
 	@Override
 	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
 		if (_teamTurn == 1 && !_isPaused && _worm[_wormTurn] != null) {
 			if (_pressedCode == e.getKeyCode() && !_worm[_wormTurn]._isJumping) {
 				_worm[_wormTurn]._walkTimer.stop();
@@ -1912,8 +1826,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseMot
 	 * the frame
 	 */
 	public void focusOnWorm() {
-		if (_worm[_wormTurn].getX() > 575) {
-			while ((_worm[_wormTurn].getX() < 574 || _worm[_wormTurn].getX() > 576) && _limit + _speedX >= 0) {
+		if (_worm[_wormTurn].getX() > GameConfig.CENTER_X) {
+			while ((_worm[_wormTurn].getX() < GameConfig.CENTER_X - 1 || _worm[_wormTurn].getX() > GameConfig.CENTER_X + 1) && _limit + _speedX >= 0) {
 				if (_speedX > 0)
 					_speedX = -_speedX;
 				if (_limit + _speedX >= 0) {
@@ -1927,11 +1841,11 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseMot
 					_limit += _speedX;
 				}
 			}
-		} else if (_worm[_wormTurn].getX() < 575) {
-			while ((_worm[_wormTurn].getX() < 574 || _worm[_wormTurn].getX() > 576) && _limit + _speedX < 1150) {
+		} else if (_worm[_wormTurn].getX() < GameConfig.CENTER_X) {
+			while ((_worm[_wormTurn].getX() < GameConfig.CENTER_X - 1 || _worm[_wormTurn].getX() > GameConfig.CENTER_X + 1) && _limit + _speedX < GameConfig.SCREEN_WIDTH) {
 				if (_speedX < 0)
 					_speedX = -_speedX;
-				if (_limit + _speedX < 1150) {
+				if (_limit + _speedX < GameConfig.SCREEN_WIDTH) {
 					_xOffSet += _speedX;
 					for (int i = 0; i < _numOfWorms * 2; i++) {
 						if (_worm[i] != null) {
@@ -1955,7 +1869,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseMot
 	 */
 	public void moveFrame(int direct, int x) {
 		if (direct == 1) {
-			if (x > 575) {
+			if (x > GameConfig.CENTER_X) {
 				if (_speedX > 0)
 					_speedX = -_speedX;
 				if (_limit + _speedX > 0) {
@@ -1971,10 +1885,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseMot
 			}
 		}
 
-		else if (x < 575) {
+		else if (x < GameConfig.CENTER_X) {
 			if (_speedX < 0)
 				_speedX = -_speedX;
-			if (_limit + _speedX < 1150) {
+			if (_limit + _speedX < GameConfig.SCREEN_WIDTH) {
 				_xOffSet += _speedX;
 				for (int i = 0; i < _numOfWorms * 2; i++) {
 					if (_worm[i] != null) {
@@ -1992,7 +1906,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseMot
 	 */
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		// TODO Auto-generated method stub
 		if (!_isPaused) {
 			if (e.getX() < _lastX) {
 				if (_mouseSpeedX > 0)
@@ -2013,7 +1926,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseMot
 			else {
 				if (_mouseSpeedX < 0)
 					_mouseSpeedX = -_mouseSpeedX;
-				if (_limit + _mouseSpeedX < 1150) {
+				if (_limit + _mouseSpeedX < GameConfig.SCREEN_WIDTH) {
 					_lastX = e.getX();
 					_xOffSet += _mouseSpeedX;
 					for (int i = 0; i < _numOfWorms * 2; i++) {
@@ -2031,7 +1944,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseMot
 
 	@Override
 	public void mouseMoved(MouseEvent e) {
-		// TODO Auto-generated method stub
 
 	}
 

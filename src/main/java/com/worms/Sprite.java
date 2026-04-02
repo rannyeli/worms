@@ -1,3 +1,5 @@
+package com.worms;
+
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -13,7 +15,7 @@ import javax.swing.Timer;
 /**
  * Class of each worm in the game
  * 
- * @author Ranny Elyashiv
+ * @author Ran Elishayev
  *
  */
 public class Sprite {
@@ -100,11 +102,11 @@ public class Sprite {
 		_teamColor = tc;
 		_bmpColumns = cols;
 		_bmpRows = rows;
-		_imgIcon = new ImageIcon(this.getClass().getClassLoader().getResource("Images\\sprites\\walk.png"));
+		_imgIcon = new ImageIcon(this.getClass().getClassLoader().getResource("Images/sprites/walk.png"));
 		_img = _imgIcon.getImage();
-		_imgIcon = new ImageIcon(this.getClass().getClassLoader().getResource("Images\\sprites\\grenade.png"));
+		_imgIcon = new ImageIcon(this.getClass().getClassLoader().getResource("Images/sprites/grenade.png"));
 		_grenade = _imgIcon.getImage();
-		_imgIcon = new ImageIcon(this.getClass().getClassLoader().getResource("Images\\explotion.gif"));
+		_imgIcon = new ImageIcon(this.getClass().getClassLoader().getResource("Images/explotion.gif"));
 		_explotion = _imgIcon.getImage();
 		_width = _img.getWidth(null) / _bmpColumns;
 		_height = _img.getHeight(null) / _bmpRows;
@@ -116,8 +118,8 @@ public class Sprite {
 		_yG = _y;
 		_xSpeed = 6;
 		_ySpeed = 6;
-		_name = new Img("Images\\names\\" + name + "-" + _teamColor + ".png", _x, _y - 30, 80, 25);
-		_hpImg = new Img("Images\\hp\\" + _hp + ".png", _x + 9, _y - 5, 40, 15);
+		_name = new Img("Images/names/" + name + "-" + _teamColor + ".png", _x, _y - 30, 80, 25);
+		_hpImg = new Img("Images/hp/" + _hp + ".png", _x + 9, _y - 5, 40, 15);
 
 		// walk timer
 		_walkTimer = new Timer(100, new ActionListener() {
@@ -288,7 +290,7 @@ public class Sprite {
 		} else if (_incline <= -0.5 && side == -1) {// down left
 			_angle = -95;
 		}
-		_intention = new Img("Images//intention-" + _teamColor + ".png",
+		_intention = new Img("Images/intention-" + _teamColor + ".png",
 				(int) ((_x + 15) + ((120 * side) * Math.cos(_angle))),
 				(int) ((_y + 15) + ((120 * side) * Math.sin(_angle))), 30, 30);
 	}
@@ -476,7 +478,7 @@ public class Sprite {
 		_name.setImgCords(_x, _y - 30);
 		_name.drawImg(g);
 		_hpImg.setImgCords(_x + 9, _y - 5);
-		_hpImg.setPath("Images\\hp\\" + _hp + ".png");
+		_hpImg.setPath("Images/hp/" + _hp + ".png");
 		_hpImg.drawImg(g);
 		if (_isShooting) {
 			_recG1 = new Rectangle(_currentFrameG * _widthG, _currentRowG * _heightG, _widthG, _heightG);

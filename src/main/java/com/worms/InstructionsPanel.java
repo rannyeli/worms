@@ -1,3 +1,5 @@
+package com.worms;
+
 
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -13,7 +15,7 @@ import javax.swing.JPanel;
 /**
  * Instructions panel
  * 
- * @author Ranny Elyashiv
+ * @author Ran Elishayev
  *
  */
 public class InstructionsPanel extends JPanel {
@@ -28,8 +30,7 @@ public class InstructionsPanel extends JPanel {
 	 * rebooting the variables
 	 */
 	public InstructionsPanel() {
-		// TODO Auto-generated constructor stub
-		ImageIcon imgI = new ImageIcon("src/Images/An Overview.png");
+		ImageIcon imgI = new ImageIcon(getClass().getClassLoader().getResource("Images/An Overview.png"));
 		_imgBackground = imgI.getImage();
 		_listeners = new LinkedList<ChangeScreensInterface>();
 		setPreferredSize(new Dimension(GameFrame.sizeOfScreenX, GameFrame.sizeOfScreenY));
@@ -37,16 +38,15 @@ public class InstructionsPanel extends JPanel {
 		addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				// TODO Auto-generated method stub
 				super.mousePressed(e);
 				if (_controls.contains(e.getPoint())) {
-					new Music("\\sounds\\buttonPressed.wav");
+					new Music("sounds/buttonPressed.wav");
 					InstControlsPanel.setPrevScreen(_prevScreen);
 					for (ChangeScreensInterface hl : _listeners)
 						hl.changeScreenType(ScreenTypes.Controls);
 				} else if (_retrun.contains(e.getPoint())) {
-					new Music("\\sounds\\backPressed.wav");
-					if (_prevScreen == "menu") {
+					new Music("sounds/backPressed.wav");
+					if ("menu".equals(_prevScreen)) {
 						for (ChangeScreensInterface hl : _listeners)
 							hl.changeScreenType(ScreenTypes.MainMenu);
 					} else {
@@ -80,7 +80,6 @@ public class InstructionsPanel extends JPanel {
 	 */
 	@Override
 	protected void paintComponent(Graphics g) {
-		// TODO Auto-generated method stub
 		super.paintComponent(g);
 		g.drawImage(_imgBackground, 0, 0, GameFrame.sizeOfScreenX, GameFrame.sizeOfScreenY, this);
 	}

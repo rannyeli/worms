@@ -1,6 +1,8 @@
+package com.worms;
+
 /**
  * Interface for changing panels
- * @author Ranny Elyashiv
+ * @author Ran Elishayev
  *
  */
 public interface ChangeScreensInterface {

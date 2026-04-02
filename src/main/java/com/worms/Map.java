@@ -1,5 +1,6 @@
+package com.worms;
 
-import java.io.File;
+import java.io.InputStream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -14,24 +15,18 @@ public class Map {
 	private int _counter = 0;
 	private int[][] _map;
 
-	// size = מספר השורות לקריאה בקובץ
-	// sizeW =מספר האזורים בכל שורה בקובץ
 	public Map(int size, int sizeW, String fileName) {
-		// size*sizeW אתחול מטריצה בגודל
 		_map = new int[size][sizeW];
 		_size = sizeW;
 
 		try {
-			File file = new File(fileName);
-
+			InputStream is = getClass().getClassLoader().getResourceAsStream(fileName);
 			DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-
-			Document doc = docBuilder.parse(file);
+			Document doc = docBuilder.parse(is);
 
 			if (doc.hasChildNodes()) {
 				readNode(doc.getChildNodes());
 			}
-
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}

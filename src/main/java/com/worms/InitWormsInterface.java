@@ -1,6 +1,8 @@
+package com.worms;
+
 /**
  * interface for initalize worms
- * @author Ranny Elyashiv
+ * @author Ran Elishayev
  *
  */
 public interface InitWormsInterface {

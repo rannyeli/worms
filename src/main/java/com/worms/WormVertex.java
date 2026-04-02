@@ -1,3 +1,5 @@
+package com.worms;
+
 import java.awt.Point;
 
 /**

@@ -1,3 +1,5 @@
+package com.worms;
+
 
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
@@ -9,7 +11,7 @@ import javax.swing.JFrame;
 /**
  * class for game frame
  * 
- * @author Ranny Elyashiv
+ * @author Ran Elishayev
  *
  */
 public class GameFrame extends JFrame implements ActionListener, ChangeScreensInterface {
@@ -23,15 +25,14 @@ public class GameFrame extends JFrame implements ActionListener, ChangeScreensIn
 													// panel
 	private GameOptionsPanel _gameOptionsPanel;// the game options panel
 	private ScreenTypes _screenType;// enum for screen Types
-	// sizes of the frame
-	public static int sizeOfScreenX = 1150;
-	public static int sizeOfScreenY = 700;
+	public static final int sizeOfScreenX = GameConfig.SCREEN_WIDTH;
+	public static final int sizeOfScreenY = GameConfig.SCREEN_HEIGHT;
 
 	/**
 	 * Ctor
 	 */
 	public GameFrame() {
-		_logo = new ImageIcon(this.getClass().getClassLoader().getResource("Images\\logo.png"));
+		_logo = new ImageIcon(this.getClass().getClassLoader().getResource("Images/logo.png"));
 		_screenType = ScreenTypes.MainMenu;
 		_gamePanel = new GamePanel();
 		_gamePanel.getPreferredSize();
@@ -43,7 +44,7 @@ public class GameFrame extends JFrame implements ActionListener, ChangeScreensIn
 		this.add(_openingPanel);
 		_openingPanel.setBounds(0, 0, sizeOfScreenX, sizeOfScreenX);
 		_openingPanel.addListener(this);
-		_menu = new Music("\\sounds\\menu.wav");
+		_menu = new Music("sounds/menu.wav");
 		_menu.Loop();
 
 		_instructionsPanel = new InstructionsPanel();
@@ -63,7 +64,7 @@ public class GameFrame extends JFrame implements ActionListener, ChangeScreensIn
 		_gameOptionsPanel.setGameListener(_gamePanel);
 
 		setLayout(null);
-		setSize(1150, 700);
+		setSize(GameConfig.SCREEN_WIDTH, GameConfig.SCREEN_HEIGHT);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);
 		setVisible(true);
@@ -73,12 +74,12 @@ public class GameFrame extends JFrame implements ActionListener, ChangeScreensIn
 
 	// creating game frame object
 	public static void main(String[] args) {
+		System.setProperty("sun.java2d.uiScale", "1.0");
 		new GameFrame();
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
 	}
 
 	/**
@@ -86,7 +87,6 @@ public class GameFrame extends JFrame implements ActionListener, ChangeScreensIn
 	 */
 	@Override
 	public void paint(Graphics g) {
-		// TODO Auto-generated method stub
 		super.paint(g);
 		if (_screenType == ScreenTypes.Game)
 			_gamePanel.repaint();
@@ -105,7 +105,6 @@ public class GameFrame extends JFrame implements ActionListener, ChangeScreensIn
 	 */
 	@Override
 	public void changeScreenType(ScreenTypes st) {
-		// TODO Auto-generated method stub
 		this.remove(_openingPanel);
 		this.remove(_instructionsPanel);
 		this.remove(_instControlsPanel);

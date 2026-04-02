@@ -1,3 +1,5 @@
+package com.worms;
+
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -6,7 +8,7 @@ import java.awt.geom.AffineTransform;
 import javax.swing.ImageIcon;
 /**
  * a class for image
- * @author Ranny
+ * @author Ran Elishayev
  *
  */
 public class Img
@@ -106,7 +108,7 @@ public class Img
 	 */
 	public void setPath(String path)
 	{
-		_image = new ImageIcon(this.getClass().getClassLoader().getResource(path)).getImage(); 
+		_image = new ImageIcon(this.getClass().getClassLoader().getResource(path)).getImage();
 	}
 	/**
 	 * method for drawing the image
