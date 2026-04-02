@@ -1,2 +1,18 @@
-.vscode/
+# Gradle
+.gradle/
+build/
+
+# Eclipse (legacy)
 .settings/
+.classpath
+.project
+bin/
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
