@@ -3,7 +3,10 @@ package com.worms;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
+import java.util.HashMap;
 
 import javax.swing.ImageIcon;
 /**
@@ -13,8 +16,9 @@ import javax.swing.ImageIcon;
  */
 public class Img
 {
-	private Image _image;//image
-	private int x, y, width, height;//image position and size
+	private static final HashMap<String, Image> scaledCache = new HashMap<>();
+	private Image _image;
+	private int x, y, width, height;
 	/**
 	 * rebooting all variables
 	 * @param path image path
@@ -108,7 +112,21 @@ public class Img
 	 */
 	public void setPath(String path)
 	{
-		_image = new ImageIcon(this.getClass().getClassLoader().getResource(path)).getImage();
+		String key = path + ":" + width + "x" + height;
+		Image cached = scaledCache.get(key);
+		if (cached != null) {
+			_image = cached;
+			return;
+		}
+		Image raw = new ImageIcon(this.getClass().getClassLoader().getResource(path)).getImage();
+		BufferedImage scaled = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2 = scaled.createGraphics();
+		g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+				RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+		g2.drawImage(raw, 0, 0, width, height, null);
+		g2.dispose();
+		_image = scaled;
+		scaledCache.put(key, scaled);
 	}
 	/**
 	 * method for drawing the image
